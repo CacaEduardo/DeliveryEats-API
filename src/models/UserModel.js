@@ -2,21 +2,16 @@ const db = require('../services/db');
 
 class UserModel {
 
-    list = async () => {
-        const query = "SELECT * FROM mobile_smind.tb_usuarios"        
-        const users = await db.execute(query)
-        return users
-    }
-
-    login = async (user, password) => {
-        const query = `SELECT id from mobile_smind.tb_usuarios WHERE login = '${user}' AND senha = '${password}'`
-        const login = await db.execute(query);
-        return login
-    }
-
-    cadastro = async(login, nome_usuario, senha) => {
-        const query = `INSERT INTO mobile_smind.tb_usuarios (login, senha, nome_usuario) VALUES ('${login}', '${senha}', '${nome_usuario}') `;
+    create = async(userData) => {
+        const { email, password, name } = userData
+        const query = `INSERT INTO deliveryeats.tb_user (email, password, name) VALUES ('${email}', '${password}', '${name}') `
         return await db.execute(query)
+    }
+
+    readByEmail = async (email) => {
+        const query = `SELECT * FROM deliveryeats.tb_user WHERE email = '${email}'`
+        const user = await db.execute(query)
+        return user
     }
 
 }

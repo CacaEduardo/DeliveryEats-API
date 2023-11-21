@@ -1,44 +1,51 @@
-const { UserModel } = require("../models");
+const { UserModel }  = require("../models")
+const bcrypt = require('bcrypt');
+
 
 class UserController {
-  list = async (req, res) => {
-    const users = await UserModel.list();
-    res.status(200).json(users);
-  };
 
-  login = async (req, res) => {
-    
-    try{
-      const { userData } = req.body
-      const valid = await UserModel.login(userData.user, userData.password)
+    create = async (req, res) => {
+        try{
+            const { userData } = req.body
+
+            const saltRounds = 10
+            const hashedPassword = await bcrypt.hash(userData.password, saltRounds)
+            userData.password = hashedPassword
+
+            const createUser = await UserModel.create(userData)
+
+            if(createUser){
+                res.status(200).json({ success: true, msg: 'Cadastro realizado' })
+            }
+
+        }catch(error){
+            res.status(500).json({ success: false, msg: 'Erro' })
+        }
+    }
+
+    doLogin = async (req, res) => {
+        try{
+            const { userData } = req.body
+            const user = await UserModel.readByEmail(userData.email)
+            if(user){
+                const userPassword = user[0].password
+                const passwordMatch = await bcrypt.compare(userData.password, userPassword)
+
+                if (passwordMatch) {
+                    res.status(200).json({ success: true, msg: 'Usuário autenticado', user: user })
+
+                } else {
+                    res.status(401).json({ success: false, msg: 'Usuário não autenticado' })
+                }
+            } else {
+                res.status(404).json({ success: false, msg: 'Usuário não encontrado' })
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ success: false, msg: 'Erro no servidor' })
+        }
+    }
   
-      if(valid.length > 0) {
-        res.status(200).json({
-          isValid: true,
-        });
-      } else {
-        res.status(200).json({
-          isValid: false,
-        });
-      }
-    }catch{
-      res.status(404).json('Ocorreu um erro')
-    }
-
-  };
-
-  cadastro = async (req, res) => {
-    try {
-      const {newUser} = req.body
-      const data = await UserModel.cadastro(newUser.login, newUser.nome_usuario, newUser.senha)
-
-      if(data){
-        res.status(200).json('Usuário cadastrado com sucesso')
-      }
-    }catch{
-      res.status(404).json('Ocorreu um erro ao realizar o cadastro')
-    }
-  }
 }
 
 module.exports = new UserController();
