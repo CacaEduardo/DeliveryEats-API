@@ -7,9 +7,12 @@ A API foi feita em nodeJS, e o banco escolhido foi o MySql.
 *Utilizamos um banco *lOCAL* para o desenvolvimento.*
 
 Integrantes:
-- Artur Silva Santos
 - Carlos Eduardo Fonseca Silva
 - David Gomes dos Santos
 - Guilherme Costa de Souza
-- Hugo de Jesus Ribeiro
+- Lorenzzo Batista
+- Lucas Filipe costa Chaves
+- Yuri Gomes Marques
 - Nata Sato Rodrigues
+- João Lazaro Oliveira dos Santos
+
